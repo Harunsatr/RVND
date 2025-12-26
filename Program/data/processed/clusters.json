@@ -1,0 +1,48 @@
+{
+  "total_clusters": 4,
+  "clusters": [
+    {
+      "cluster_id": 1,
+      "vehicle_type": "C",
+      "customer_ids": [
+        4,
+        8,
+        6,
+        10
+      ],
+      "total_demand": 148
+    },
+    {
+      "cluster_id": 2,
+      "vehicle_type": "B",
+      "customer_ids": [
+        5,
+        2
+      ],
+      "total_demand": 85
+    },
+    {
+      "cluster_id": 3,
+      "vehicle_type": "B",
+      "customer_ids": [
+        7,
+        1
+      ],
+      "total_demand": 75
+    },
+    {
+      "cluster_id": 4,
+      "vehicle_type": "A",
+      "customer_ids": [
+        9,
+        3
+      ],
+      "total_demand": 40
+    }
+  ],
+  "fleet_usage": {
+    "A": 1,
+    "B": 2,
+    "C": 1
+  }
+}
