@@ -32,11 +32,23 @@ Program ini menggunakan algoritma multi-tahap untuk menghasilkan solusi optimal:
    - Optimasi rute per cluster
    - Parameter: m=2, α=1, β=2, ρ=0.2, q₀=0.85, iterasi=2
 
-5. **RVND (Randomized Variable Neighborhood Descent)** (`rvnd.py`)
-   - Perbaikan akhir dengan operator:
+5. **RVND (Randomized Variable Neighborhood Descent)** (`rvnd.py`) - **REVISED v2.0**
+   - **Two-level local search** dengan strict neighborhood management
+   - **Intra-route neighborhoods**:
      - 2-opt: Membalikkan segmen rute
-     - Swap: Menukar posisi dua pelanggan
-     - Relocate: Memindahkan pelanggan ke posisi lain
+     - Or-opt: Relokasi 1-3 pelanggan berurutan
+     - Reinsertion: Memindahkan satu pelanggan
+     - Exchange: Menukar dua pelanggan
+   - **Inter-route neighborhoods** (untuk multi-route):
+     - shift(1,0), shift(2,0): Pindahkan pelanggan antar rute
+     - swap(1,1), swap(2,1), swap(2,2): Tukar pelanggan antar rute
+     - cross: Cross-exchange antar rute
+   - **Fitur utama**:
+     - Iteration control dengan early stopping
+     - Strict feasibility checking (capacity + time windows)
+     - Deterministic behavior (seeded RNG)
+     - Hanya menerima solusi feasible yang lebih baik
+   - **Dokumentasi lengkap**: Lihat [docs/rvnd_specification.md](docs/rvnd_specification.md)
 
 6. **Final Integration** (`final_integration.py`)
    - Menggabungkan semua hasil
@@ -206,9 +218,17 @@ q0 = 0.85      # Exploitation vs exploration
 iterations = 2 # Jumlah iterasi
 ```
 
-**RVND Parameters** (`rvnd.py`):
+**RVND Parameters** (`rvnd.py`) - **NEW in v2.0**:
 ```python
-max_iterations = 100  # Maksimal iterasi tanpa improvement
+MAX_INTER_ITERATIONS = 50   # Maksimal iterasi inter-route
+MAX_INTRA_ITERATIONS = 100  # Maksimal iterasi intra-route
+SEED = 84                   # Random seed untuk deterministic behavior
+
+# Intra-route neighborhoods
+["two_opt", "or_opt", "reinsertion", "exchange"]
+
+# Inter-route neighborhoods (multi-route scenarios)
+["shift_1_0", "shift_2_0", "swap_1_1", "swap_2_1", "swap_2_2", "cross"]
 ```
 
 ### Data Input
@@ -272,6 +292,27 @@ Program melakukan validasi otomatis terhadap:
 - ✅ Setiap rute dimulai dan berakhir di depot
 - ✅ Matriks jarak simetris
 - ✅ Tidak ada jarak negatif
+
+### RVND Validation (v2.0)
+RVND v2.0 memiliki validasi ketat:
+- ✅ **Feasibility-first**: Hanya solusi feasible yang diterima
+- ✅ **Non-worsening**: Objective tidak pernah memburuk
+- ✅ **Deterministic**: Hasil sama dengan seed yang sama
+- ✅ **Early stopping**: Bounded computation time
+
+## 📖 Dokumentasi Lengkap
+
+### Core Documentation
+- [README.md](README.md) - Panduan utama (file ini)
+- [docs/dokumentasi_id.md](docs/dokumentasi_id.md) - Dokumentasi teknis lengkap
+
+### RVND v2.0 Documentation (NEW)
+- [docs/rvnd_specification.md](docs/rvnd_specification.md) - Spesifikasi algoritma RVND lengkap
+- [docs/rvnd_implementation_summary.md](docs/rvnd_implementation_summary.md) - Ringkasan implementasi
+- [docs/rvnd_flow_diagram.md](docs/rvnd_flow_diagram.md) - Diagram alur algoritma
+
+### Summary Reports
+- [docs/final_summary.md](docs/final_summary.md) - Ringkasan hasil optimasi
 
 ## 🤝 Kontribusi
 
