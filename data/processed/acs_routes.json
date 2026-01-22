@@ -1,0 +1,84 @@
+{
+  "clusters": [
+    {
+      "sequence": [
+        0,
+        3,
+        2,
+        1,
+        0
+      ],
+      "stops": [
+        {
+          "node_id": 0,
+          "arrival": 510,
+          "arrival_str": "08:30",
+          "departure": 510,
+          "departure_str": "08:30",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 3,
+          "arrival": 512.0,
+          "arrival_str": "08:32",
+          "departure": 512.0,
+          "departure_str": "08:32",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 2,
+          "arrival": 514.0,
+          "arrival_str": "08:34",
+          "departure": 514.0,
+          "departure_str": "08:34",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 1,
+          "arrival": 516.0,
+          "arrival_str": "08:36",
+          "departure": 516.0,
+          "departure_str": "08:36",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 0,
+          "arrival": 519.0,
+          "arrival_str": "08:39",
+          "departure": 519.0,
+          "departure_str": "08:39",
+          "wait": 0.0,
+          "violation": 0.0
+        }
+      ],
+      "total_distance": 9.0,
+      "total_travel_time": 9.0,
+      "total_service_time": 0.0,
+      "total_time_component": 9.0,
+      "total_tw_violation": 0.0,
+      "objective": 18.0,
+      "cluster_id": 1,
+      "vehicle_type": "A",
+      "tau0": 0.037037037037037035,
+      "iterations": 2
+    }
+  ],
+  "summary": {
+    "total_distance": 9.0,
+    "total_tw_violation": 0.0,
+    "objective_sum": 18.0
+  },
+  "parameters": {
+    "num_ants": 2,
+    "alpha": 1,
+    "beta": 2,
+    "rho": 0.2,
+    "q0": 0.85,
+    "max_iterations": 2
+  },
+  "random_seed": 42
+}

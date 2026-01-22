@@ -1,0 +1,112 @@
+{
+  "summary": {
+    "total_distance": 9.0,
+    "total_time_component": 9.0,
+    "total_tw_violation": 0.0,
+    "total_objective": 18.0,
+    "total_cost": 59000.0,
+    "fleet_usage": {
+      "A": 1,
+      "B": 0,
+      "C": 0
+    }
+  },
+  "routes": [
+    {
+      "cluster_id": 1,
+      "vehicle_type": "A",
+      "sequence": [
+        0,
+        3,
+        2,
+        1,
+        0
+      ],
+      "stops": [
+        {
+          "node_id": 0,
+          "arrival": 510,
+          "arrival_str": "08:30",
+          "departure": 510,
+          "departure_str": "08:30",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 3,
+          "arrival": 512.0,
+          "arrival_str": "08:32",
+          "departure": 512.0,
+          "departure_str": "08:32",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 2,
+          "arrival": 514.0,
+          "arrival_str": "08:34",
+          "departure": 514.0,
+          "departure_str": "08:34",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 1,
+          "arrival": 516.0,
+          "arrival_str": "08:36",
+          "departure": 516.0,
+          "departure_str": "08:36",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 0,
+          "arrival": 519.0,
+          "arrival_str": "08:39",
+          "departure": 519.0,
+          "departure_str": "08:39",
+          "wait": 0.0,
+          "violation": 0.0
+        }
+      ],
+      "total_distance": 9.0,
+      "total_travel_time": 9.0,
+      "total_service_time": 0.0,
+      "total_time_component": 9.0,
+      "total_tw_violation": 0.0,
+      "objective": 18.0,
+      "initial_sequence": [
+        0,
+        3,
+        2,
+        1,
+        0
+      ],
+      "acs_sequence": [
+        0,
+        3,
+        2,
+        1,
+        0
+      ],
+      "rvnd_sequence": [
+        0,
+        3,
+        2,
+        1,
+        0
+      ]
+    }
+  ],
+  "validations": {
+    "nodes_match": false,
+    "distance_symmetric": true,
+    "distance_zero_diagonal": true,
+    "capacity_respected": true,
+    "tw_no_violation": true
+  },
+  "seeds": {
+    "acs": 42,
+    "rvnd": 84
+  }
+}
