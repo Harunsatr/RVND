@@ -63,7 +63,10 @@
         "total_service_time": 0.0,
         "total_time_component": 9.0,
         "total_tw_violation": 0.0,
-        "objective": 18.0
+        "total_demand": 8.0,
+        "capacity_violation": 0.0,
+        "objective": 18.0,
+        "feasible": true
       },
       "improved": {
         "sequence": [
@@ -125,7 +128,10 @@
         "total_service_time": 0.0,
         "total_time_component": 9.0,
         "total_tw_violation": 0.0,
-        "objective": 18.0
+        "total_demand": 8.0,
+        "capacity_violation": 0.0,
+        "objective": 18.0,
+        "feasible": true
       }
     }
   ],
@@ -135,14 +141,27 @@
     "objective_before": 18.0,
     "objective_after": 18.0,
     "tw_before": 0.0,
-    "tw_after": 0.0
+    "tw_after": 0.0,
+    "capacity_violations_before": 0,
+    "capacity_violations_after": 0
   },
   "parameters": {
-    "neighborhoods": [
-      "two_opt",
-      "swap",
-      "relocate"
+    "inter_neighborhoods": [
+      "shift_1_0",
+      "shift_2_0",
+      "swap_1_1",
+      "swap_2_1",
+      "swap_2_2",
+      "cross"
     ],
+    "intra_neighborhoods": [
+      "two_opt",
+      "or_opt",
+      "reinsertion",
+      "exchange"
+    ],
+    "max_inter_iterations": 50,
+    "max_intra_iterations": 100,
     "seed": 84
   }
 }

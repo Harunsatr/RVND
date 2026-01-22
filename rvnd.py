@@ -3,7 +3,7 @@ import math
 import random
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 DATA_DIR = Path(__file__).resolve().parent / "data" / "processed"
 INSTANCE_PATH = DATA_DIR / "parsed_instance.json"
@@ -11,7 +11,13 @@ DISTANCE_PATH = DATA_DIR / "parsed_distance.json"
 ACS_PATH = DATA_DIR / "acs_routes.json"
 RVND_PATH = DATA_DIR / "rvnd_routes.json"
 
-NEIGHBORHOODS = ["two_opt", "swap", "relocate"]
+# RVND Configuration
+MAX_INTER_ITERATIONS = 50
+MAX_INTRA_ITERATIONS = 100
+
+# Neighborhood definitions
+INTER_ROUTE_NEIGHBORHOODS = ["shift_1_0", "shift_2_0", "swap_1_1", "swap_2_1", "swap_2_2", "cross"]
+INTRA_ROUTE_NEIGHBORHOODS = ["two_opt", "or_opt", "reinsertion", "exchange"]
 
 
 def load_json(path: Path) -> dict:
@@ -33,7 +39,8 @@ def minutes_to_clock(value: float) -> str:
     return f"{hours:02d}:{minutes:02d}+{seconds:02d}s"
 
 
-def evaluate_route(sequence: List[int], instance: dict, distance_data: dict) -> Dict[str, float]:
+def evaluate_route(sequence: List[int], instance: dict, distance_data: dict, fleet_info: dict) -> Dict[str, float]:
+    """Evaluate a single route with capacity and time window constraints."""
     node_index = {node["id"]: idx for idx, node in enumerate(distance_data["nodes"])}
     distance_matrix = distance_data["distance_matrix"]
     travel_matrix = distance_data["travel_time_matrix"]
@@ -52,6 +59,7 @@ def evaluate_route(sequence: List[int], instance: dict, distance_data: dict) -> 
     travel_time_sum = 0.0
     service_time_sum = 0.0
     violation_sum = 0.0
+    total_demand = 0.0
 
     prev_node = sequence[0]
     current_time = depot_tw["start"] + depot_service
@@ -83,6 +91,7 @@ def evaluate_route(sequence: List[int], instance: dict, distance_data: dict) -> 
             tw_start = parse_time_to_minutes(customer["time_window"]["start"])
             tw_end = parse_time_to_minutes(customer["time_window"]["end"])
             service_time = customer["service_time"]
+            total_demand += customer["demand"]
 
         arrival = max(tw_start, arrival_no_wait)
         wait = max(0.0, tw_start - arrival_no_wait)
@@ -109,6 +118,9 @@ def evaluate_route(sequence: List[int], instance: dict, distance_data: dict) -> 
     time_component = travel_time_sum + service_time_sum
     objective = total_distance + time_component + violation_sum
 
+    # Check capacity constraint
+    capacity_violation = max(0.0, total_demand - fleet_info["capacity"])
+
     return {
         "sequence": sequence,
         "stops": stops,
@@ -117,93 +129,243 @@ def evaluate_route(sequence: List[int], instance: dict, distance_data: dict) -> 
         "total_service_time": service_time_sum,
         "total_time_component": time_component,
         "total_tw_violation": violation_sum,
-        "objective": objective
+        "total_demand": total_demand,
+        "capacity_violation": capacity_violation,
+        "objective": objective,
+        "feasible": violation_sum == 0 and capacity_violation == 0
     }
 
 
-def two_opt(sequence: List[int]) -> List[Tuple[int, int]]:
-    moves = []
-    for i in range(1, len(sequence) - 2):
-        for j in range(i + 1, len(sequence) - 1):
-            moves.append((i, j))
-    return moves
+def is_solution_better(new_metrics: Dict, current_metrics: Dict) -> bool:
+    """Check if new solution is better and feasible."""
+    if not new_metrics["feasible"]:
+        return False
+    if not current_metrics["feasible"]:
+        return new_metrics["feasible"]
+    return new_metrics["objective"] < current_metrics["objective"]
 
 
-def apply_two_opt(sequence: List[int], i: int, j: int) -> List[int]:
+# ========== INTRA-ROUTE NEIGHBORHOODS ==========
+
+def intra_two_opt(sequence: List[int], i: int, j: int) -> List[int]:
+    """2-opt: reverse segment between i and j."""
     return sequence[:i] + list(reversed(sequence[i:j + 1])) + sequence[j + 1:]
 
 
-def swap_moves(sequence: List[int]) -> List[Tuple[int, int]]:
-    moves = []
-    for i in range(1, len(sequence) - 2):
-        for j in range(i + 1, len(sequence) - 1):
-            moves.append((i, j))
-    return moves
+def intra_or_opt(sequence: List[int], i: int, length: int, j: int) -> List[int]:
+    """Or-opt: move a segment of 'length' nodes starting at i to position j."""
+    if i + length > len(sequence) - 1:
+        return sequence
+    segment = sequence[i:i + length]
+    remaining = sequence[:i] + sequence[i + length:]
+    insert_pos = j if j <= i else j - length
+    return remaining[:insert_pos] + segment + remaining[insert_pos:]
 
 
-def apply_swap(sequence: List[int], i: int, j: int) -> List[int]:
-    new_sequence = sequence[:]
-    new_sequence[i], new_sequence[j] = new_sequence[j], new_sequence[i]
-    return new_sequence
-
-
-def relocate_moves(sequence: List[int]) -> List[Tuple[int, int]]:
-    moves = []
-    for i in range(1, len(sequence) - 1):
-        for j in range(1, len(sequence)):
-            if j == i or j == i + 1:
-                continue
-            moves.append((i, j))
-    return moves
-
-
-def apply_relocate(sequence: List[int], i: int, j: int) -> List[int]:
-    new_sequence = sequence[:]
-    node = new_sequence.pop(i)
+def intra_reinsertion(sequence: List[int], i: int, j: int) -> List[int]:
+    """Reinsertion: move single customer from i to j."""
+    if i == j or i == 0 or i == len(sequence) - 1:
+        return sequence
+    new_seq = sequence[:]
+    node = new_seq.pop(i)
     if j > i:
-        new_sequence.insert(j - 1, node)
+        new_seq.insert(j - 1, node)
     else:
-        new_sequence.insert(j, node)
-    return new_sequence
+        new_seq.insert(j, node)
+    return new_seq
 
+
+def intra_exchange(sequence: List[int], i: int, j: int) -> List[int]:
+    """Exchange: swap two customers."""
+    if i == 0 or j == 0 or i == len(sequence) - 1 or j == len(sequence) - 1:
+        return sequence
+    new_seq = sequence[:]
+    new_seq[i], new_seq[j] = new_seq[j], new_seq[i]
+    return new_seq
+
+
+def apply_intra_neighborhood(neighborhood: str, sequence: List[int], rng: random.Random) -> Optional[List[int]]:
+    """Apply a single intra-route neighborhood move."""
+    n = len(sequence)
+    if n <= 2:
+        return None
+    
+    if neighborhood == "two_opt":
+        candidates = [(i, j) for i in range(1, n - 2) for j in range(i + 1, n - 1)]
+        if not candidates:
+            return None
+        i, j = rng.choice(candidates)
+        return intra_two_opt(sequence, i, j)
+    
+    elif neighborhood == "or_opt":
+        candidates = []
+        for length in [1, 2, 3]:
+            for i in range(1, n - 1):
+                if i + length > n - 1:
+                    continue
+                for j in range(1, n - length + 1):
+                    if j < i or j > i + length:
+                        candidates.append((i, length, j))
+        if not candidates:
+            return None
+        i, length, j = rng.choice(candidates)
+        return intra_or_opt(sequence, i, length, j)
+    
+    elif neighborhood == "reinsertion":
+        candidates = [(i, j) for i in range(1, n - 1) for j in range(1, n) if j != i and j != i + 1]
+        if not candidates:
+            return None
+        i, j = rng.choice(candidates)
+        return intra_reinsertion(sequence, i, j)
+    
+    elif neighborhood == "exchange":
+        candidates = [(i, j) for i in range(1, n - 1) for j in range(i + 1, n - 1)]
+        if not candidates:
+            return None
+        i, j = rng.choice(candidates)
+        return intra_exchange(sequence, i, j)
+    
+    return None
+
+
+# ========== INTER-ROUTE NEIGHBORHOODS ==========
+# Note: For single-route optimization, inter-route operators are not applicable
+# These are placeholders for multi-route scenarios
+
+def apply_inter_neighborhood(neighborhood: str, routes: List[Dict], rng: random.Random) -> Optional[List[Dict]]:
+    """Apply inter-route neighborhood (placeholder for single-route case)."""
+    # In single-route case, inter-route operations don't apply
+    # Return None to indicate no move available
+    return None
+
+
+# ========== INTRA-ROUTE RVND ==========
+
+def rvnd_intra(
+    sequence: List[int],
+    instance: dict,
+    distance_data: dict,
+    fleet_info: dict,
+    rng: random.Random,
+    max_iterations: int
+) -> Dict:
+    """
+    Intra-route RVND with strict neighborhood list management.
+    
+    Rules:
+    - NL_intra starts full at beginning
+    - When neighborhood improves: reset NL_intra
+    - When neighborhood fails: remove from NL_intra
+    - Stop when NL_intra empty OR max_iterations reached
+    """
+    current_solution = sequence[:]
+    current_metrics = evaluate_route(current_solution, instance, distance_data, fleet_info)
+    
+    iter_count = 0
+    
+    while iter_count < max_iterations:
+        NL_intra = INTRA_ROUTE_NEIGHBORHOODS[:]
+        
+        while NL_intra:
+            # Select random neighborhood
+            neighborhood = rng.choice(NL_intra)
+            
+            # Apply neighborhood
+            new_solution = apply_intra_neighborhood(neighborhood, current_solution, rng)
+            
+            if new_solution is None:
+                # No valid move
+                NL_intra.remove(neighborhood)
+                continue
+            
+            # Evaluate new solution
+            new_metrics = evaluate_route(new_solution, instance, distance_data, fleet_info)
+            
+            # Check if better and feasible
+            if is_solution_better(new_metrics, current_metrics):
+                # Accept improvement
+                current_solution = new_solution
+                current_metrics = new_metrics
+                # Reset NL_intra (restart with full neighborhood list)
+                break
+            else:
+                # No improvement, remove neighborhood
+                NL_intra.remove(neighborhood)
+        
+        iter_count += 1
+        
+        # If NL_intra was exhausted without improvement, we're done
+        if not NL_intra:
+            break
+    
+    return current_metrics
+
+
+# ========== INTER-ROUTE RVND ==========
+
+def rvnd_inter(
+    routes: List[Dict],
+    instance: dict,
+    distance_data: dict,
+    fleet_data: dict,
+    rng: random.Random,
+    max_iterations: int
+) -> List[Dict]:
+    """
+    Inter-route RVND with strict neighborhood list management.
+    
+    For single-route case, this is a placeholder.
+    In multi-route scenarios, this would apply shift/swap/cross operators.
+    """
+    # Placeholder for single-route case
+    # In actual multi-route implementation, this would manage inter-route moves
+    return routes
+
+
+# ========== MAIN RVND CONTROLLER ==========
 
 def rvnd_route(route: Dict, instance: Dict, distance_data: Dict, rng: random.Random) -> Dict:
-    """Apply RVND to improve route."""
+    """
+    Two-level RVND: Inter-route → Intra-route with strict iteration control.
+    
+    For single-route case:
+    - Inter-route phase is skipped (no other routes to interact with)
+    - Intra-route phase performs all local search
+    
+    Rules:
+    - Iteration counters never reset
+    - Each level has independent NL management
+    - Only feasible improvements accepted
+    """
     sequence = deepcopy(route["sequence"])
+    vehicle_type = route["vehicle_type"]
     
-    # Get baseline
-    baseline = evaluate_route(sequence, instance, distance_data)
-    best_solution = sequence[:]
-    best_distance = baseline["total_distance"]
+    # Get fleet information
+    fleet_data = {fleet["id"]: fleet for fleet in instance["fleet"]}
+    fleet_info = fleet_data[vehicle_type]
     
-    improved = True
-    iterations = 0
-    max_iterations = 100
+    # Baseline evaluation
+    baseline = evaluate_route(sequence, instance, distance_data, fleet_info)
     
-    while improved and iterations < max_iterations:
-        improved = False
-        iterations += 1
-        
-        for neighborhood_func in [two_opt, swap_moves, relocate_moves]:
-            for move in neighborhood_func(best_solution):
-                if neighborhood_func == two_opt:
-                    new_solution = apply_two_opt(best_solution, move[0], move[1])
-                elif neighborhood_func == swap_moves:
-                    new_solution = apply_swap(best_solution, move[0], move[1])
-                else:
-                    new_solution = apply_relocate(best_solution, move[0], move[1])
-                
-                new_metrics = evaluate_route(new_solution, instance, distance_data)
-                if new_metrics["total_distance"] < best_distance:
-                    best_solution = new_solution
-                    best_distance = new_metrics["total_distance"]
-                    improved = True
-                    break
-            
-            if improved:
-                break
+    # For single-route case, we only apply intra-route RVND
+    # (Inter-route requires multiple routes)
     
-    final_metrics = evaluate_route(best_solution, instance, distance_data)
+    iter_inter = 0
+    iter_intra = 0
+    
+    # INTER-ROUTE PHASE (skipped for single-route)
+    # In multi-route scenario, this would run with MAX_INTER_ITERATIONS
+    
+    # INTRA-ROUTE PHASE
+    final_metrics = rvnd_intra(
+        sequence=sequence,
+        instance=instance,
+        distance_data=distance_data,
+        fleet_info=fleet_info,
+        rng=rng,
+        max_iterations=MAX_INTRA_ITERATIONS
+    )
+    
     return final_metrics
 
 
@@ -213,6 +375,8 @@ def main() -> None:
     acs_data = load_json(ACS_PATH)
 
     rng = random.Random(84)
+    
+    fleet_data = {fleet["id"]: fleet for fleet in instance["fleet"]}
 
     results = []
     summary = {
@@ -221,11 +385,14 @@ def main() -> None:
         "objective_before": 0.0,
         "objective_after": 0.0,
         "tw_before": 0.0,
-        "tw_after": 0.0
+        "tw_after": 0.0,
+        "capacity_violations_before": 0,
+        "capacity_violations_after": 0
     }
 
     for route in acs_data["clusters"]:
-        baseline = evaluate_route(route["sequence"], instance, distance_data)
+        fleet_info = fleet_data[route["vehicle_type"]]
+        baseline = evaluate_route(route["sequence"], instance, distance_data, fleet_info)
         improved = rvnd_route(route, instance, distance_data, rng)
 
         summary["distance_before"] += baseline["total_distance"]
@@ -234,6 +401,8 @@ def main() -> None:
         summary["objective_after"] += improved["objective"]
         summary["tw_before"] += baseline["total_tw_violation"]
         summary["tw_after"] += improved["total_tw_violation"]
+        summary["capacity_violations_before"] += (1 if baseline["capacity_violation"] > 0 else 0)
+        summary["capacity_violations_after"] += (1 if improved["capacity_violation"] > 0 else 0)
 
         results.append({
             "cluster_id": route["cluster_id"],
@@ -246,7 +415,10 @@ def main() -> None:
         "routes": results,
         "summary": summary,
         "parameters": {
-            "neighborhoods": NEIGHBORHOODS,
+            "inter_neighborhoods": INTER_ROUTE_NEIGHBORHOODS,
+            "intra_neighborhoods": INTRA_ROUTE_NEIGHBORHOODS,
+            "max_inter_iterations": MAX_INTER_ITERATIONS,
+            "max_intra_iterations": MAX_INTRA_ITERATIONS,
             "seed": 84
         }
     }
@@ -255,11 +427,11 @@ def main() -> None:
         json.dump(output, handle, indent=2)
 
     print(
-        "rvnd: distance_before=", round(summary["distance_before"], 3),
-        ", distance_after=", round(summary["distance_after"], 3),
-        ", objective_before=", round(summary["objective_before"], 3),
-        ", objective_after=", round(summary["objective_after"], 3),
-        sep=""
+        "RVND Results:\n"
+        f"  Distance: {round(summary['distance_before'], 3)} -> {round(summary['distance_after'], 3)}\n"
+        f"  Objective: {round(summary['objective_before'], 3)} -> {round(summary['objective_after'], 3)}\n"
+        f"  TW Violations: {round(summary['tw_before'], 3)} -> {round(summary['tw_after'], 3)}\n"
+        f"  Capacity Violations: {summary['capacity_violations_before']} -> {summary['capacity_violations_after']}"
     )
 
 
