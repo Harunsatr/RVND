@@ -5,9 +5,8 @@
       "vehicle_type": "A",
       "sequence": [
         0,
-        2,
         1,
-        3,
+        2,
         0
       ],
       "stops": [
@@ -21,7 +20,7 @@
           "violation": 0.0
         },
         {
-          "node_id": 2,
+          "node_id": 1,
           "arrival": 513.0,
           "arrival_str": "08:33",
           "departure": 513.0,
@@ -30,34 +29,25 @@
           "violation": 0.0
         },
         {
-          "node_id": 1,
+          "node_id": 2,
+          "arrival": 515.0,
+          "arrival_str": "08:35",
+          "departure": 515.0,
+          "departure_str": "08:35",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
+          "node_id": 0,
           "arrival": 518.0,
           "arrival_str": "08:38",
           "departure": 518.0,
           "departure_str": "08:38",
           "wait": 0.0,
           "violation": 0.0
-        },
-        {
-          "node_id": 3,
-          "arrival": 519.0,
-          "arrival_str": "08:39",
-          "departure": 519.0,
-          "departure_str": "08:39",
-          "wait": 0.0,
-          "violation": 0.0
-        },
-        {
-          "node_id": 0,
-          "arrival": 528.0,
-          "arrival_str": "08:48",
-          "departure": 528.0,
-          "departure_str": "08:48",
-          "wait": 0.0,
-          "violation": 0.0
         }
       ],
-      "total_distance": 18.0,
+      "total_distance": 8.0,
       "total_tw_violation": 0.0
     }
   ],

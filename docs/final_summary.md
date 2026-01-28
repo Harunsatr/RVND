@@ -1,10 +1,10 @@
 # MFVRPTW Final Summary
 
-- Total distance: 16.000 km
-- Total time component: 16.000 minutes
+- Total distance: 8.000 km
+- Total time component: 8.000 minutes
 - Total TW violation: 0.000 minutes
-- Total objective: 32.000
-- Total cost: Rp 66000
+- Total objective: 16.000
+- Total cost: Rp 58000
 - Fleet usage: {'A': 1, 'B': 0, 'C': 0}
 
 ## Validations

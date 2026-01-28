@@ -302,6 +302,7 @@ def rvnd_intra(
     current_metrics = evaluate_route(current_solution, instance, distance_data, fleet_info)
     
     iter_count = 0
+    iteration_logs = []
     
     while iter_count < max_iterations:
         NL_intra = INTRA_ROUTE_NEIGHBORHOODS[:]
@@ -326,6 +327,19 @@ def rvnd_intra(
                 # Accept improvement
                 current_solution = new_solution
                 current_metrics = new_metrics
+                
+                # Log this improvement
+                iteration_logs.append({
+                    "iteration_id": iter_count + 1,
+                    "phase": "RVND-INTRA",
+                    "neighborhood": neighborhood,
+                    "routes_snapshot": [new_solution],
+                    "total_distance": new_metrics["total_distance"],
+                    "total_service_time": new_metrics["total_service_time"],
+                    "total_travel_time": new_metrics["total_travel_time"],
+                    "objective": new_metrics["objective"]
+                })
+                
                 # Reset NL_intra (restart with full neighborhood list)
                 break
             else:
@@ -337,6 +351,9 @@ def rvnd_intra(
         # If NL_intra was exhausted without improvement, we're done
         if not NL_intra:
             break
+    
+    # Add iteration logs to metrics
+    current_metrics["iteration_logs"] = iteration_logs
     
     return current_metrics
 
@@ -455,6 +472,7 @@ def main() -> None:
     # This ensures smallest feasible vehicle is used and stock limits are respected
     used_vehicles = {}
     reassigned_results = []
+    all_iteration_logs = []
     
     for route_result in results:
         improved = route_result["improved"]
@@ -477,6 +495,13 @@ def main() -> None:
             improved = evaluate_route(improved["sequence"], instance, distance_data, fleet_info)
             improved["vehicle_assignment_failed"] = False
         
+        # Collect iteration logs
+        if "iteration_logs" in improved:
+            for log in improved["iteration_logs"]:
+                log["cluster_id"] = route_result["cluster_id"]
+                log["vehicle_type"] = new_vehicle_type
+                all_iteration_logs.append(log)
+        
         reassigned_results.append({
             "cluster_id": route_result["cluster_id"],
             "vehicle_type": new_vehicle_type,
@@ -494,7 +519,8 @@ def main() -> None:
             "max_intra_iterations": MAX_INTRA_ITERATIONS,
             "seed": 84
         },
-        "vehicle_usage": used_vehicles
+        "vehicle_usage": used_vehicles,
+        "iteration_logs": all_iteration_logs
     }
 
     with RVND_PATH.open("w", encoding="utf-8") as handle:
