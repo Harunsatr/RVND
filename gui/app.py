@@ -63,6 +63,12 @@ except ImportError as e:
     st.error(f"Error loading Graph Hasil: {e}")
     render_graph_hasil = lambda: st.error("Graph Hasil module not found")
 
+try:
+    from academic_replay import render_academic_replay
+except ImportError as e:
+    # Silently handle - academic replay is optional
+    render_academic_replay = None
+
 
 def _build_state_from_parsed(instance: Dict, parsed_distance: Dict) -> Dict:
     points = {"depots": [], "customers": []}
@@ -329,8 +335,13 @@ def main() -> None:
     st.title("MFVRPTW Route Optimization")
     st.caption("Sweep → NN → ACS → RVND")
 
-    # Top-level tabs: input editors and results (fixed four menus)
-    tab1, tab2, tab3, tab4 = st.tabs(["Input Titik", "Input Data", "Hasil", "Graph Hasil"])
+    # Top-level tabs: input editors, results, and academic replay
+    if render_academic_replay is not None:
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Input Titik", "Input Data", "Hasil", "Graph Hasil", "📚 Academic Replay"])
+    else:
+        tab1, tab2, tab3, tab4 = st.tabs(["Input Titik", "Input Data", "Hasil", "Graph Hasil"])
+        tab5 = None
+    
     with tab1:
         render_input_titik()
     with tab2:
@@ -339,6 +350,9 @@ def main() -> None:
         render_hasil()
     with tab4:
         render_graph_hasil()
+    if tab5 is not None:
+        with tab5:
+            render_academic_replay()
 
     if not FINAL_SOLUTION_PATH.exists() or not FINAL_SUMMARY_PATH.exists():
         st.error("Required artifacts not found. Please ensure preprocessing has been completed.")

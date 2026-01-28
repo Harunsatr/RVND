@@ -15,8 +15,8 @@
       "id": 1,
       "name": "Customer 1",
       "x": 40.0,
-      "y": 60.0,
-      "demand": 1.0,
+      "y": 75.0,
+      "demand": 7.0,
       "time_window": {
         "start": "08:30",
         "end": "17:00"
@@ -26,8 +26,8 @@
     {
       "id": 2,
       "name": "Customer 2",
-      "x": 60.0,
-      "y": 75.0,
+      "x": 20.0,
+      "y": 60.0,
       "demand": 2.0,
       "time_window": {
         "start": "08:30",

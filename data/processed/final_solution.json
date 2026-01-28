@@ -1,10 +1,10 @@
 {
   "summary": {
-    "total_distance": 8.0,
-    "total_time_component": 8.0,
+    "total_distance": 5.0,
+    "total_time_component": 5.0,
     "total_tw_violation": 0.0,
-    "total_objective": 16.0,
-    "total_cost": 58000.0,
+    "total_objective": 10.0,
+    "total_cost": 55000.0,
     "fleet_usage": {
       "A": 1,
       "B": 0,
@@ -17,8 +17,8 @@
       "vehicle_type": "A",
       "sequence": [
         0,
-        1,
         2,
+        1,
         0
       ],
       "stops": [
@@ -32,6 +32,15 @@
           "violation": 0.0
         },
         {
+          "node_id": 2,
+          "arrival": 511.0,
+          "arrival_str": "08:31",
+          "departure": 511.0,
+          "departure_str": "08:31",
+          "wait": 0.0,
+          "violation": 0.0
+        },
+        {
           "node_id": 1,
           "arrival": 513.0,
           "arrival_str": "08:33",
@@ -41,46 +50,37 @@
           "violation": 0.0
         },
         {
-          "node_id": 2,
+          "node_id": 0,
           "arrival": 515.0,
           "arrival_str": "08:35",
           "departure": 515.0,
           "departure_str": "08:35",
           "wait": 0.0,
           "violation": 0.0
-        },
-        {
-          "node_id": 0,
-          "arrival": 518.0,
-          "arrival_str": "08:38",
-          "departure": 518.0,
-          "departure_str": "08:38",
-          "wait": 0.0,
-          "violation": 0.0
         }
       ],
-      "total_distance": 8.0,
-      "total_travel_time": 8.0,
+      "total_distance": 5.0,
+      "total_travel_time": 5.0,
       "total_service_time": 0.0,
-      "total_time_component": 8.0,
+      "total_time_component": 5.0,
       "total_tw_violation": 0.0,
-      "objective": 16.0,
+      "objective": 10.0,
       "initial_sequence": [
         0,
-        1,
         2,
+        1,
         0
       ],
       "acs_sequence": [
         0,
-        1,
         2,
+        1,
         0
       ],
       "rvnd_sequence": [
         0,
-        1,
         2,
+        1,
         0
       ]
     }

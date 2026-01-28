@@ -1,0 +1,2199 @@
+{
+  "mode": "ACADEMIC_REPLAY",
+  "dataset": {
+    "depot": {
+      "id": 0,
+      "name": "Depot",
+      "x": 0.0,
+      "y": 0.0,
+      "time_window": {
+        "start": "08:00",
+        "end": "17:00"
+      },
+      "service_time": 0
+    },
+    "customers": [
+      {
+        "id": 1,
+        "name": "C1",
+        "x": 2.0,
+        "y": 3.0,
+        "demand": 10,
+        "service_time": 5,
+        "time_window": {
+          "start": "08:00",
+          "end": "12:00"
+        }
+      },
+      {
+        "id": 2,
+        "name": "C2",
+        "x": 5.0,
+        "y": 1.0,
+        "demand": 15,
+        "service_time": 10,
+        "time_window": {
+          "start": "08:00",
+          "end": "14:00"
+        }
+      },
+      {
+        "id": 3,
+        "name": "C3",
+        "x": 6.0,
+        "y": 4.0,
+        "demand": 20,
+        "service_time": 8,
+        "time_window": {
+          "start": "09:00",
+          "end": "15:00"
+        }
+      },
+      {
+        "id": 4,
+        "name": "C4",
+        "x": 8.0,
+        "y": 2.0,
+        "demand": 25,
+        "service_time": 12,
+        "time_window": {
+          "start": "08:30",
+          "end": "16:00"
+        }
+      },
+      {
+        "id": 5,
+        "name": "C5",
+        "x": 3.0,
+        "y": 6.0,
+        "demand": 30,
+        "service_time": 15,
+        "time_window": {
+          "start": "10:00",
+          "end": "14:00"
+        }
+      },
+      {
+        "id": 6,
+        "name": "C6",
+        "x": 7.0,
+        "y": 5.0,
+        "demand": 18,
+        "service_time": 7,
+        "time_window": {
+          "start": "08:00",
+          "end": "13:00"
+        }
+      },
+      {
+        "id": 7,
+        "name": "C7",
+        "x": 4.0,
+        "y": 8.0,
+        "demand": 22,
+        "service_time": 9,
+        "time_window": {
+          "start": "09:00",
+          "end": "16:00"
+        }
+      },
+      {
+        "id": 8,
+        "name": "C8",
+        "x": 1.0,
+        "y": 5.0,
+        "demand": 12,
+        "service_time": 6,
+        "time_window": {
+          "start": "08:00",
+          "end": "11:00"
+        }
+      },
+      {
+        "id": 9,
+        "name": "C9",
+        "x": 9.0,
+        "y": 7.0,
+        "demand": 28,
+        "service_time": 11,
+        "time_window": {
+          "start": "10:00",
+          "end": "15:00"
+        }
+      },
+      {
+        "id": 10,
+        "name": "C10",
+        "x": 5.0,
+        "y": 9.0,
+        "demand": 35,
+        "service_time": 14,
+        "time_window": {
+          "start": "09:00",
+          "end": "17:00"
+        }
+      }
+    ],
+    "fleet": [
+      {
+        "id": "A",
+        "capacity": 60,
+        "units": 2,
+        "fixed_cost": 50000,
+        "variable_cost_per_km": 1000
+      },
+      {
+        "id": "B",
+        "capacity": 100,
+        "units": 2,
+        "fixed_cost": 60000,
+        "variable_cost_per_km": 1000
+      },
+      {
+        "id": "C",
+        "capacity": 150,
+        "units": 1,
+        "fixed_cost": 70000,
+        "variable_cost_per_km": 1000
+      }
+    ],
+    "acs_parameters": {
+      "alpha": 0.5,
+      "beta": 2,
+      "rho": 0.2,
+      "q0": 0.85,
+      "num_ants": 2,
+      "max_iterations": 2
+    },
+    "objective_weights": {
+      "w1_distance": 1.0,
+      "w2_time": 1.0,
+      "w3_tw_violation": 1.0
+    }
+  },
+  "clusters": [
+    {
+      "cluster_id": 1,
+      "customer_ids": [
+        2,
+        4,
+        3
+      ],
+      "total_demand": 60,
+      "vehicle_type": "A"
+    },
+    {
+      "cluster_id": 2,
+      "customer_ids": [
+        6,
+        9
+      ],
+      "total_demand": 46,
+      "vehicle_type": "A"
+    },
+    {
+      "cluster_id": 3,
+      "customer_ids": [
+        1,
+        10,
+        5,
+        7,
+        8
+      ],
+      "total_demand": 109,
+      "vehicle_type": "C"
+    }
+  ],
+  "routes": [
+    {
+      "cluster_id": 1,
+      "vehicle_type": "A",
+      "sequence": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "stops": [
+        {
+          "node_id": 0,
+          "arrival": 480,
+          "departure": 480,
+          "wait": 0,
+          "violation": 0
+        },
+        {
+          "node_id": 2,
+          "arrival": 485.1,
+          "departure": 495.1,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 10
+        },
+        {
+          "node_id": 3,
+          "arrival": 540,
+          "departure": 548,
+          "wait": 41.74,
+          "violation": 0,
+          "service_time": 8
+        },
+        {
+          "node_id": 4,
+          "arrival": 550.83,
+          "departure": 562.83,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 12
+        },
+        {
+          "node_id": 0,
+          "arrival": 571.07,
+          "departure": 571.07,
+          "wait": 0,
+          "violation": 0
+        }
+      ],
+      "total_distance": 18.30082684943533,
+      "total_service_time": 30.0,
+      "total_travel_time": 19.34,
+      "total_tw_violation": 0.0,
+      "total_demand": 60
+    },
+    {
+      "cluster_id": 2,
+      "vehicle_type": "A",
+      "sequence": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "stops": [
+        {
+          "node_id": 0,
+          "arrival": 480,
+          "departure": 480,
+          "wait": 0,
+          "violation": 0
+        },
+        {
+          "node_id": 6,
+          "arrival": 488.6,
+          "departure": 495.6,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 7
+        },
+        {
+          "node_id": 9,
+          "arrival": 600,
+          "departure": 611,
+          "wait": 101.57,
+          "violation": 0,
+          "service_time": 11
+        },
+        {
+          "node_id": 0,
+          "arrival": 622.4,
+          "departure": 622.4,
+          "wait": 0,
+          "violation": 0
+        }
+      ],
+      "total_distance": 22.832506642780196,
+      "total_service_time": 18.0,
+      "total_travel_time": 22.83,
+      "total_tw_violation": 0.0,
+      "total_demand": 46
+    },
+    {
+      "cluster_id": 3,
+      "vehicle_type": "C",
+      "sequence": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "stops": [
+        {
+          "node_id": 0,
+          "arrival": 480,
+          "departure": 480,
+          "wait": 0,
+          "violation": 0
+        },
+        {
+          "node_id": 1,
+          "arrival": 483.61,
+          "departure": 488.61,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 5
+        },
+        {
+          "node_id": 8,
+          "arrival": 490.84,
+          "departure": 496.84,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 6
+        },
+        {
+          "node_id": 5,
+          "arrival": 600,
+          "departure": 615,
+          "wait": 100.92,
+          "violation": 0,
+          "service_time": 15
+        },
+        {
+          "node_id": 7,
+          "arrival": 617.24,
+          "departure": 626.24,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 9
+        },
+        {
+          "node_id": 10,
+          "arrival": 627.65,
+          "departure": 641.65,
+          "wait": 0,
+          "violation": 0,
+          "service_time": 14
+        },
+        {
+          "node_id": 0,
+          "arrival": 651.95,
+          "departure": 651.95,
+          "wait": 0,
+          "violation": 0
+        }
+      ],
+      "total_distance": 21.129253974181523,
+      "total_service_time": 49.0,
+      "total_travel_time": 22.02,
+      "total_tw_violation": 0.0,
+      "total_demand": 109
+    }
+  ],
+  "costs": {
+    "total_fixed_cost": 170000.0,
+    "total_variable_cost": 62262.587466397046,
+    "total_cost": 232262.58746639703,
+    "breakdown": [
+      {
+        "cluster_id": 1,
+        "vehicle_type": "A",
+        "fixed_cost": 50000,
+        "variable_cost": 18300.826849435332,
+        "total_cost": 68300.82684943534
+      },
+      {
+        "cluster_id": 2,
+        "vehicle_type": "A",
+        "fixed_cost": 50000,
+        "variable_cost": 22832.506642780194,
+        "total_cost": 72832.5066427802
+      },
+      {
+        "cluster_id": 3,
+        "vehicle_type": "C",
+        "fixed_cost": 70000,
+        "variable_cost": 21129.253974181524,
+        "total_cost": 91129.25397418153
+      }
+    ]
+  },
+  "validation": [
+    {
+      "cluster_id": 1,
+      "sequence_expected": [
+        0,
+        2,
+        4,
+        3,
+        0
+      ],
+      "sequence_actual": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "sequence_match": false,
+      "distance_expected": 22.47,
+      "distance_actual": 18.30082684943533,
+      "distance_match": false,
+      "valid": false
+    },
+    {
+      "cluster_id": 2,
+      "sequence_expected": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "sequence_actual": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "sequence_match": true,
+      "distance_expected": 20.81,
+      "distance_actual": 22.832506642780196,
+      "distance_match": false,
+      "valid": false
+    },
+    {
+      "cluster_id": 3,
+      "sequence_expected": [
+        0,
+        8,
+        1,
+        5,
+        7,
+        10,
+        0
+      ],
+      "sequence_actual": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "sequence_match": false,
+      "distance_expected": 26.54,
+      "distance_actual": 21.129253974181523,
+      "distance_match": false,
+      "valid": false
+    }
+  ],
+  "all_valid": false,
+  "iteration_logs": [
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 1,
+      "angle": 56.31,
+      "formula": "atan2(3.0, 2.0) = 56.31\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 2,
+      "angle": 11.31,
+      "formula": "atan2(1.0, 5.0) = 11.31\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 3,
+      "angle": 33.69,
+      "formula": "atan2(4.0, 6.0) = 33.69\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 4,
+      "angle": 14.04,
+      "formula": "atan2(2.0, 8.0) = 14.04\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 5,
+      "angle": 63.43,
+      "formula": "atan2(6.0, 3.0) = 63.43\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 6,
+      "angle": 35.54,
+      "formula": "atan2(5.0, 7.0) = 35.54\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 7,
+      "angle": 63.43,
+      "formula": "atan2(8.0, 4.0) = 63.43\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 8,
+      "angle": 78.69,
+      "formula": "atan2(5.0, 1.0) = 78.69\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 9,
+      "angle": 37.87,
+      "formula": "atan2(7.0, 9.0) = 37.87\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "polar_angle",
+      "customer_id": 10,
+      "angle": 60.95,
+      "formula": "atan2(9.0, 5.0) = 60.95\u00b0"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "sorted_order",
+      "order": [
+        2,
+        4,
+        3,
+        6,
+        9,
+        1,
+        10,
+        5,
+        7,
+        8
+      ],
+      "description": "Customers sorted by polar angle (ascending)"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "cluster_formed",
+      "cluster_id": 1,
+      "customer_ids": [
+        2,
+        4,
+        3
+      ],
+      "total_demand": 60,
+      "vehicle_type": "A"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "cluster_formed",
+      "cluster_id": 2,
+      "customer_ids": [
+        6,
+        9
+      ],
+      "total_demand": 46,
+      "vehicle_type": "A"
+    },
+    {
+      "phase": "SWEEP",
+      "step": "cluster_formed",
+      "cluster_id": 3,
+      "customer_ids": [
+        1,
+        10,
+        5,
+        7,
+        8
+      ],
+      "total_demand": 109,
+      "vehicle_type": "C"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 1,
+      "step": 1,
+      "from_node": 0,
+      "to_node": 2,
+      "distance": 5.1,
+      "description": "Select customer 2 (distance = 5.1)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 1,
+      "step": 2,
+      "from_node": 2,
+      "to_node": 3,
+      "distance": 3.16,
+      "description": "Select customer 3 (distance = 3.16)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 1,
+      "step": 3,
+      "from_node": 3,
+      "to_node": 4,
+      "distance": 2.83,
+      "description": "Select customer 4 (distance = 2.83)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 1,
+      "step": 4,
+      "from_node": 4,
+      "to_node": 0,
+      "distance": 8.25,
+      "description": "Return to depot (distance = 8.25)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 2,
+      "step": 1,
+      "from_node": 0,
+      "to_node": 6,
+      "distance": 8.6,
+      "description": "Select customer 6 (distance = 8.6)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 2,
+      "step": 2,
+      "from_node": 6,
+      "to_node": 9,
+      "distance": 2.83,
+      "description": "Select customer 9 (distance = 2.83)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 2,
+      "step": 3,
+      "from_node": 9,
+      "to_node": 0,
+      "distance": 11.4,
+      "description": "Return to depot (distance = 11.4)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 3,
+      "step": 1,
+      "from_node": 0,
+      "to_node": 1,
+      "distance": 3.61,
+      "description": "Select customer 1 (distance = 3.61)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 3,
+      "step": 2,
+      "from_node": 1,
+      "to_node": 8,
+      "distance": 2.24,
+      "description": "Select customer 8 (distance = 2.24)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 3,
+      "step": 3,
+      "from_node": 8,
+      "to_node": 5,
+      "distance": 2.24,
+      "description": "Select customer 5 (distance = 2.24)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 3,
+      "step": 4,
+      "from_node": 5,
+      "to_node": 7,
+      "distance": 2.24,
+      "description": "Select customer 7 (distance = 2.24)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 3,
+      "step": 5,
+      "from_node": 7,
+      "to_node": 10,
+      "distance": 1.41,
+      "description": "Select customer 10 (distance = 1.41)"
+    },
+    {
+      "phase": "NN",
+      "cluster_id": 3,
+      "step": 6,
+      "from_node": 10,
+      "to_node": 0,
+      "distance": 10.3,
+      "description": "Return to depot (distance = 10.3)"
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "step": "init_pheromone",
+      "tau0": 0.017235,
+      "nn_length": 19.34,
+      "formula": "tau0 = 1 / (3 \u00d7 19.34) = 0.017235"
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 1,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.92,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "2": 0.5312,
+        "3": 0.2656,
+        "4": 0.2031
+      },
+      "selected": 2
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 1,
+      "step": 2,
+      "from_node": 2,
+      "random_q": 0.45,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "3": 0.5,
+        "4": 0.5
+      },
+      "selected": 3
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 1,
+      "step": 3,
+      "from_node": 3,
+      "random_q": 0.78,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "4": 1.0
+      },
+      "selected": 4
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 1,
+      "route": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "distance": 19.34,
+      "service_time": 30.0,
+      "tw_violation": 0.0,
+      "objective": 68.68
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 2,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.32,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "2": 0.5312,
+        "3": 0.2656,
+        "4": 0.2031
+      },
+      "selected": 2
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 2,
+      "step": 2,
+      "from_node": 2,
+      "random_q": 0.88,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "3": 0.5,
+        "4": 0.5
+      },
+      "selected": 3
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 2,
+      "step": 3,
+      "from_node": 3,
+      "random_q": 0.15,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "4": 1.0
+      },
+      "selected": 4
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "ant": 2,
+      "route": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "distance": 19.34,
+      "service_time": 30.0,
+      "tw_violation": 0.0,
+      "objective": 68.68
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 1,
+      "step": "iteration_summary",
+      "best_route": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "best_distance": 19.34,
+      "best_objective": 68.68
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 1,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.72,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "2": 0.5728,
+        "3": 0.2421,
+        "4": 0.1851
+      },
+      "selected": 2
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 1,
+      "step": 2,
+      "from_node": 2,
+      "random_q": 0.55,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "3": 0.542,
+        "4": 0.458
+      },
+      "selected": 3
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 1,
+      "step": 3,
+      "from_node": 3,
+      "random_q": 0.38,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "4": 1.0
+      },
+      "selected": 4
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 1,
+      "route": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "distance": 19.34,
+      "service_time": 30.0,
+      "tw_violation": 0.0,
+      "objective": 68.68
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 2,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.91,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "2": 0.5656,
+        "3": 0.2462,
+        "4": 0.1882
+      },
+      "selected": 2
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 2,
+      "step": 2,
+      "from_node": 2,
+      "random_q": 0.25,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "3": 0.5346,
+        "4": 0.4654
+      },
+      "selected": 3
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 2,
+      "step": 3,
+      "from_node": 3,
+      "random_q": 0.66,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "4": 1.0
+      },
+      "selected": 4
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "ant": 2,
+      "route": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "distance": 19.34,
+      "service_time": 30.0,
+      "tw_violation": 0.0,
+      "objective": 68.68
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 1,
+      "iteration": 2,
+      "step": "iteration_summary",
+      "best_route": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "best_distance": 19.34,
+      "best_objective": 68.68
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "step": "init_pheromone",
+      "tau0": 0.021901,
+      "nn_length": 22.83,
+      "formula": "tau0 = 1 / (2 \u00d7 22.83) = 0.021901"
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "ant": 1,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.8,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 0.3627,
+        "6": 0.6373
+      },
+      "selected": 6
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "ant": 1,
+      "step": 2,
+      "from_node": 6,
+      "random_q": 0.4,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 1.0
+      },
+      "selected": 9
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "ant": 1,
+      "route": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance": 22.83,
+      "service_time": 18.0,
+      "tw_violation": 0.0,
+      "objective": 63.66
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "ant": 2,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.55,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 0.3627,
+        "6": 0.6373
+      },
+      "selected": 6
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "ant": 2,
+      "step": 2,
+      "from_node": 6,
+      "random_q": 0.9,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "9": 1.0
+      },
+      "selected": 9
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "ant": 2,
+      "route": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance": 22.83,
+      "service_time": 18.0,
+      "tw_violation": 0.0,
+      "objective": 63.66
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 1,
+      "step": "iteration_summary",
+      "best_route": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "best_distance": 22.83,
+      "best_objective": 63.66
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "ant": 1,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.35,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 0.3419,
+        "6": 0.6581
+      },
+      "selected": 6
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "ant": 1,
+      "step": 2,
+      "from_node": 6,
+      "random_q": 0.75,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 1.0
+      },
+      "selected": 9
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "ant": 1,
+      "route": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance": 22.83,
+      "service_time": 18.0,
+      "tw_violation": 0.0,
+      "objective": 63.66
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "ant": 2,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.6,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 0.3458,
+        "6": 0.6542
+      },
+      "selected": 6
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "ant": 2,
+      "step": 2,
+      "from_node": 6,
+      "random_q": 0.2,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "9": 1.0
+      },
+      "selected": 9
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "ant": 2,
+      "route": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance": 22.83,
+      "service_time": 18.0,
+      "tw_violation": 0.0,
+      "objective": 63.66
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 2,
+      "iteration": 2,
+      "step": "iteration_summary",
+      "best_route": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "best_distance": 22.83,
+      "best_objective": 63.66
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "step": "init_pheromone",
+      "tau0": 0.009083,
+      "nn_length": 22.02,
+      "formula": "tau0 = 1 / (5 \u00d7 22.02) = 0.009083"
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 1,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.88,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "1": 0.4822,
+        "5": 0.1393,
+        "7": 0.0783,
+        "8": 0.2411,
+        "10": 0.0591
+      },
+      "selected": 1
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 1,
+      "step": 2,
+      "from_node": 1,
+      "random_q": 0.42,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.2803,
+        "7": 0.0967,
+        "8": 0.5607,
+        "10": 0.0623
+      },
+      "selected": 8
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 1,
+      "step": 3,
+      "from_node": 8,
+      "random_q": 0.65,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.6973,
+        "7": 0.1937,
+        "10": 0.109
+      },
+      "selected": 5
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 1,
+      "step": 4,
+      "from_node": 5,
+      "random_q": 0.3,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "7": 0.7222,
+        "10": 0.2778
+      },
+      "selected": 7
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 1,
+      "step": 5,
+      "from_node": 7,
+      "random_q": 0.55,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "10": 1.0
+      },
+      "selected": 10
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 1,
+      "route": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "distance": 22.02,
+      "service_time": 49.0,
+      "tw_violation": 0.0,
+      "objective": 93.04
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 2,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.22,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "1": 0.4822,
+        "5": 0.1393,
+        "7": 0.0783,
+        "8": 0.2411,
+        "10": 0.0591
+      },
+      "selected": 1
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 2,
+      "step": 2,
+      "from_node": 1,
+      "random_q": 0.78,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.2803,
+        "7": 0.0967,
+        "8": 0.5607,
+        "10": 0.0623
+      },
+      "selected": 8
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 2,
+      "step": 3,
+      "from_node": 8,
+      "random_q": 0.5,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.6973,
+        "7": 0.1937,
+        "10": 0.109
+      },
+      "selected": 5
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 2,
+      "step": 4,
+      "from_node": 5,
+      "random_q": 0.85,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "7": 0.7222,
+        "10": 0.2778
+      },
+      "selected": 7
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 2,
+      "step": 5,
+      "from_node": 7,
+      "random_q": 0.15,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "10": 1.0
+      },
+      "selected": 10
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "ant": 2,
+      "route": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "distance": 22.02,
+      "service_time": 49.0,
+      "tw_violation": 0.0,
+      "objective": 93.04
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 1,
+      "step": "iteration_summary",
+      "best_route": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "best_distance": 22.02,
+      "best_objective": 93.04
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 1,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.7,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "1": 0.5554,
+        "5": 0.1196,
+        "7": 0.0673,
+        "8": 0.207,
+        "10": 0.0508
+      },
+      "selected": 1
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 1,
+      "step": 2,
+      "from_node": 1,
+      "random_q": 0.33,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.2353,
+        "7": 0.0811,
+        "8": 0.6313,
+        "10": 0.0523
+      },
+      "selected": 8
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 1,
+      "step": 3,
+      "from_node": 8,
+      "random_q": 0.88,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "5": 0.7556,
+        "7": 0.1564,
+        "10": 0.088
+      },
+      "selected": 5
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 1,
+      "step": 4,
+      "from_node": 5,
+      "random_q": 0.45,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "7": 0.7772,
+        "10": 0.2228
+      },
+      "selected": 7
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 1,
+      "step": 5,
+      "from_node": 7,
+      "random_q": 0.6,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "10": 1.0
+      },
+      "selected": 10
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 1,
+      "route": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "distance": 22.02,
+      "service_time": 49.0,
+      "tw_violation": 0.0,
+      "objective": 93.04
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 2,
+      "step": 1,
+      "from_node": 0,
+      "random_q": 0.95,
+      "q0": 0.85,
+      "decision": "exploit",
+      "probabilities": {
+        "1": 0.5439,
+        "5": 0.1227,
+        "7": 0.069,
+        "8": 0.2123,
+        "10": 0.0521
+      },
+      "selected": 1
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 2,
+      "step": 2,
+      "from_node": 1,
+      "random_q": 0.28,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.2422,
+        "7": 0.0835,
+        "8": 0.6204,
+        "10": 0.0538
+      },
+      "selected": 8
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 2,
+      "step": 3,
+      "from_node": 8,
+      "random_q": 0.52,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "5": 0.7469,
+        "7": 0.162,
+        "10": 0.0911
+      },
+      "selected": 5
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 2,
+      "step": 4,
+      "from_node": 5,
+      "random_q": 0.72,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "7": 0.769,
+        "10": 0.231
+      },
+      "selected": 7
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 2,
+      "step": 5,
+      "from_node": 7,
+      "random_q": 0.4,
+      "q0": 0.85,
+      "decision": "explore",
+      "probabilities": {
+        "10": 1.0
+      },
+      "selected": 10
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "ant": 2,
+      "route": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "distance": 22.02,
+      "service_time": 49.0,
+      "tw_violation": 0.0,
+      "objective": 93.04
+    },
+    {
+      "phase": "ACS",
+      "cluster_id": 3,
+      "iteration": 2,
+      "step": "iteration_summary",
+      "best_route": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "best_distance": 22.02,
+      "best_objective": 93.04
+    },
+    {
+      "phase": "RVND-INTER",
+      "iteration": 1,
+      "neighborhood": "swap_1_1",
+      "candidate_moves": [
+        {
+          "swap": [
+            3,
+            6
+          ],
+          "routes": [
+            0,
+            1
+          ],
+          "new_distance": 65.86
+        },
+        {
+          "swap": [
+            4,
+            6
+          ],
+          "routes": [
+            0,
+            1
+          ],
+          "new_distance": 65.04
+        },
+        {
+          "swap": [
+            2,
+            1
+          ],
+          "routes": [
+            0,
+            2
+          ],
+          "new_distance": 68.57
+        },
+        {
+          "swap": [
+            2,
+            8
+          ],
+          "routes": [
+            0,
+            2
+          ],
+          "new_distance": 70.64
+        },
+        {
+          "swap": [
+            3,
+            1
+          ],
+          "routes": [
+            0,
+            2
+          ],
+          "new_distance": 74.36
+        }
+      ],
+      "best_move": null,
+      "accepted": false,
+      "distance_before": 64.19,
+      "distance_after": 64.19
+    },
+    {
+      "phase": "RVND-INTER",
+      "iteration": 1,
+      "neighborhood": "shift_1_0",
+      "candidate_moves": [],
+      "best_move": null,
+      "accepted": false,
+      "distance_before": 64.19,
+      "distance_after": 64.19
+    },
+    {
+      "phase": "RVND-INTER",
+      "iteration": 1,
+      "neighborhood": "swap_2_1",
+      "candidate_moves": [],
+      "best_move": null,
+      "accepted": false,
+      "distance_before": 64.19,
+      "distance_after": 64.19
+    },
+    {
+      "phase": "RVND-INTER",
+      "iteration": 1,
+      "neighborhood": "swap_2_2",
+      "candidate_moves": [],
+      "best_move": null,
+      "accepted": false,
+      "distance_before": 64.19,
+      "distance_after": 64.19
+    },
+    {
+      "phase": "RVND-INTER",
+      "iteration": 1,
+      "neighborhood": "cross",
+      "candidate_moves": [],
+      "best_move": null,
+      "accepted": false,
+      "distance_before": 64.19,
+      "distance_after": 64.19
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 1,
+      "iteration": 1,
+      "neighborhood": "or_opt",
+      "sequence_before": [
+        0,
+        2,
+        3,
+        4,
+        0
+      ],
+      "sequence_after": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "distance_before": 19.34,
+      "distance_after": 18.3,
+      "accepted": true
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 1,
+      "iteration": 2,
+      "neighborhood": "or_opt",
+      "sequence_before": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "sequence_after": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "distance_before": 18.3,
+      "distance_after": 18.3,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 1,
+      "iteration": 2,
+      "neighborhood": "reinsertion",
+      "sequence_before": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "sequence_after": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "distance_before": 18.3,
+      "distance_after": 18.3,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 1,
+      "iteration": 2,
+      "neighborhood": "exchange",
+      "sequence_before": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "sequence_after": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "distance_before": 18.3,
+      "distance_after": 18.3,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 1,
+      "iteration": 2,
+      "neighborhood": "two_opt",
+      "sequence_before": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "sequence_after": [
+        0,
+        3,
+        4,
+        2,
+        0
+      ],
+      "distance_before": 18.3,
+      "distance_after": 18.3,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 2,
+      "iteration": 1,
+      "neighborhood": "or_opt",
+      "sequence_before": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "sequence_after": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance_before": 22.83,
+      "distance_after": 22.83,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 2,
+      "iteration": 1,
+      "neighborhood": "reinsertion",
+      "sequence_before": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "sequence_after": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance_before": 22.83,
+      "distance_after": 22.83,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 2,
+      "iteration": 1,
+      "neighborhood": "exchange",
+      "sequence_before": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "sequence_after": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance_before": 22.83,
+      "distance_after": 22.83,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 2,
+      "iteration": 1,
+      "neighborhood": "two_opt",
+      "sequence_before": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "sequence_after": [
+        0,
+        6,
+        9,
+        0
+      ],
+      "distance_before": 22.83,
+      "distance_after": 22.83,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 3,
+      "iteration": 1,
+      "neighborhood": "or_opt",
+      "sequence_before": [
+        0,
+        1,
+        8,
+        5,
+        7,
+        10,
+        0
+      ],
+      "sequence_after": [
+        0,
+        1,
+        5,
+        7,
+        10,
+        8,
+        0
+      ],
+      "distance_before": 22.02,
+      "distance_after": 21.17,
+      "accepted": true
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 3,
+      "iteration": 2,
+      "neighborhood": "or_opt",
+      "sequence_before": [
+        0,
+        1,
+        5,
+        7,
+        10,
+        8,
+        0
+      ],
+      "sequence_after": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "distance_before": 21.17,
+      "distance_after": 21.13,
+      "accepted": true
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 3,
+      "iteration": 3,
+      "neighborhood": "or_opt",
+      "sequence_before": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "sequence_after": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "distance_before": 21.13,
+      "distance_after": 21.13,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 3,
+      "iteration": 3,
+      "neighborhood": "reinsertion",
+      "sequence_before": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "sequence_after": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "distance_before": 21.13,
+      "distance_after": 21.13,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 3,
+      "iteration": 3,
+      "neighborhood": "exchange",
+      "sequence_before": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "sequence_after": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "distance_before": 21.13,
+      "distance_after": 21.13,
+      "accepted": false
+    },
+    {
+      "phase": "RVND-INTRA",
+      "cluster_id": 3,
+      "iteration": 3,
+      "neighborhood": "two_opt",
+      "sequence_before": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "sequence_after": [
+        0,
+        1,
+        5,
+        10,
+        7,
+        8,
+        0
+      ],
+      "distance_before": 21.13,
+      "distance_after": 21.13,
+      "accepted": false
+    },
+    {
+      "phase": "VEHICLE_REASSIGN",
+      "cluster_id": 1,
+      "demand": 60,
+      "old_vehicle": "A",
+      "new_vehicle": "A",
+      "reason": "Demand 60 fits in A (capacity \u2264 60)"
+    },
+    {
+      "phase": "VEHICLE_REASSIGN",
+      "cluster_id": 2,
+      "demand": 46,
+      "old_vehicle": "A",
+      "new_vehicle": "A",
+      "reason": "Demand 46 fits in A (capacity \u2264 60)"
+    },
+    {
+      "phase": "VEHICLE_REASSIGN",
+      "cluster_id": 3,
+      "demand": 109,
+      "old_vehicle": "C",
+      "new_vehicle": "C",
+      "reason": "Demand 109 fits in C (capacity \u2264 150)"
+    }
+  ]
+}

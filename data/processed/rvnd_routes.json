@@ -6,8 +6,8 @@
       "baseline": {
         "sequence": [
           0,
-          1,
           2,
+          1,
           0
         ],
         "stops": [
@@ -21,6 +21,15 @@
             "violation": 0.0
           },
           {
+            "node_id": 2,
+            "arrival": 511.0,
+            "arrival_str": "08:31",
+            "departure": 511.0,
+            "departure_str": "08:31",
+            "wait": 0.0,
+            "violation": 0.0
+          },
+          {
             "node_id": 1,
             "arrival": 513.0,
             "arrival_str": "08:33",
@@ -30,39 +39,30 @@
             "violation": 0.0
           },
           {
-            "node_id": 2,
+            "node_id": 0,
             "arrival": 515.0,
             "arrival_str": "08:35",
             "departure": 515.0,
             "departure_str": "08:35",
             "wait": 0.0,
             "violation": 0.0
-          },
-          {
-            "node_id": 0,
-            "arrival": 518.0,
-            "arrival_str": "08:38",
-            "departure": 518.0,
-            "departure_str": "08:38",
-            "wait": 0.0,
-            "violation": 0.0
           }
         ],
-        "total_distance": 8.0,
-        "total_travel_time": 8.0,
+        "total_distance": 5.0,
+        "total_travel_time": 5.0,
         "total_service_time": 0.0,
-        "total_time_component": 8.0,
+        "total_time_component": 5.0,
         "total_tw_violation": 0.0,
-        "total_demand": 3.0,
+        "total_demand": 9.0,
         "capacity_violation": 0.0,
-        "objective": 16.0,
+        "objective": 10.0,
         "feasible": true
       },
       "improved": {
         "sequence": [
           0,
-          1,
           2,
+          1,
           0
         ],
         "stops": [
@@ -76,6 +76,15 @@
             "violation": 0.0
           },
           {
+            "node_id": 2,
+            "arrival": 511.0,
+            "arrival_str": "08:31",
+            "departure": 511.0,
+            "departure_str": "08:31",
+            "wait": 0.0,
+            "violation": 0.0
+          },
+          {
             "node_id": 1,
             "arrival": 513.0,
             "arrival_str": "08:33",
@@ -85,32 +94,23 @@
             "violation": 0.0
           },
           {
-            "node_id": 2,
+            "node_id": 0,
             "arrival": 515.0,
             "arrival_str": "08:35",
             "departure": 515.0,
             "departure_str": "08:35",
             "wait": 0.0,
             "violation": 0.0
-          },
-          {
-            "node_id": 0,
-            "arrival": 518.0,
-            "arrival_str": "08:38",
-            "departure": 518.0,
-            "departure_str": "08:38",
-            "wait": 0.0,
-            "violation": 0.0
           }
         ],
-        "total_distance": 8.0,
-        "total_travel_time": 8.0,
+        "total_distance": 5.0,
+        "total_travel_time": 5.0,
         "total_service_time": 0.0,
-        "total_time_component": 8.0,
+        "total_time_component": 5.0,
         "total_tw_violation": 0.0,
-        "total_demand": 3.0,
+        "total_demand": 9.0,
         "capacity_violation": 0.0,
-        "objective": 16.0,
+        "objective": 10.0,
         "feasible": true,
         "iteration_logs": [],
         "vehicle_assignment_failed": false
@@ -118,10 +118,10 @@
     }
   ],
   "summary": {
-    "distance_before": 8.0,
-    "distance_after": 8.0,
-    "objective_before": 16.0,
-    "objective_after": 16.0,
+    "distance_before": 5.0,
+    "distance_after": 5.0,
+    "objective_before": 10.0,
+    "objective_after": 10.0,
     "tw_before": 0.0,
     "tw_after": 0.0,
     "capacity_violations_before": 0,
