@@ -2,7 +2,7 @@
   "depot": {
     "id": 0,
     "name": "Depot 0",
-    "x": 50.0,
+    "x": 44.0,
     "y": 50.0,
     "time_window": {
       "start": "08:30",
@@ -14,9 +14,9 @@
     {
       "id": 1,
       "name": "Customer 1",
-      "x": 20.0,
-      "y": 50.0,
-      "demand": 2.0,
+      "x": 44.0,
+      "y": 26.0,
+      "demand": 8.0,
       "time_window": {
         "start": "08:30",
         "end": "17:00"
@@ -26,9 +26,9 @@
     {
       "id": 2,
       "name": "Customer 2",
-      "x": 36.0,
-      "y": 23.0,
-      "demand": 2.0,
+      "x": 44.0,
+      "y": 8.0,
+      "demand": 5.0,
       "time_window": {
         "start": "08:30",
         "end": "17:00"
@@ -38,9 +38,9 @@
     {
       "id": 3,
       "name": "Customer 3",
-      "x": 56.0,
-      "y": 65.0,
-      "demand": 4.0,
+      "x": 49.0,
+      "y": 56.0,
+      "demand": 1.0,
       "time_window": {
         "start": "08:30",
         "end": "17:00"
@@ -72,8 +72,8 @@
     }
   ],
   "acs_parameters": {
-    "num_ants": 2,
-    "alpha": 1,
+    "num_ants": 1,
+    "alpha": 0.5,
     "beta": 2,
     "rho": 0.2,
     "q0": 0.85,

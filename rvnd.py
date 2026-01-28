@@ -20,6 +20,34 @@ INTER_ROUTE_NEIGHBORHOODS = ["shift_1_0", "shift_2_0", "swap_1_1", "swap_2_1", "
 INTRA_ROUTE_NEIGHBORHOODS = ["two_opt", "or_opt", "reinsertion", "exchange"]
 
 
+def assign_vehicle_by_demand(total_demand: float, fleet_data: List[Dict], used_vehicles: Dict[str, int]) -> Optional[str]:
+    """
+    Assign smallest feasible vehicle based on demand intervals.
+    
+    REVISION NOTE: Vehicle assignment rules per specification:
+    - A: demand ≤ 60
+    - B: 60 < demand ≤ 100  
+    - C: 100 < demand ≤ 150
+    
+    Choose smallest feasible vehicle that:
+    1. Can handle the demand (capacity)
+    2. Has available units (stock not exceeded)
+    """
+    # Sort fleets by capacity (smallest first)
+    sorted_fleets = sorted(fleet_data, key=lambda f: f["capacity"])
+    
+    for fleet in sorted_fleets:
+        # Check capacity feasibility
+        if fleet["capacity"] >= total_demand:
+            # Check unit availability
+            units_used = used_vehicles.get(fleet["id"], 0)
+            if units_used < fleet["units"]:
+                return fleet["id"]
+    
+    # No feasible vehicle available
+    return None
+
+
 def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
@@ -137,12 +165,24 @@ def evaluate_route(sequence: List[int], instance: dict, distance_data: dict, fle
 
 
 def is_solution_better(new_metrics: Dict, current_metrics: Dict) -> bool:
-    """Check if new solution is better and feasible."""
-    if not new_metrics["feasible"]:
+    """
+    Check if new solution is better.
+    
+    REVISION NOTE: Per specification, acceptance is based ONLY on distance improvement.
+    Time window violations are reported but do NOT invalidate solutions.
+    Capacity violations DO invalidate solutions (vehicle assignment constraint).
+    """
+    # Reject if capacity violated (vehicle cannot physically handle demand)
+    if new_metrics["capacity_violation"] > 0:
         return False
-    if not current_metrics["feasible"]:
-        return new_metrics["feasible"]
-    return new_metrics["objective"] < current_metrics["objective"]
+    
+    # Accept if current is capacity-infeasible but new is feasible
+    if current_metrics["capacity_violation"] > 0 and new_metrics["capacity_violation"] == 0:
+        return True
+    
+    # Both capacity-feasible: compare total distance only
+    # Time window violations are soft constraints - reported but not used for rejection
+    return new_metrics["total_distance"] < current_metrics["total_distance"]
 
 
 # ========== INTRA-ROUTE NEIGHBORHOODS ==========
@@ -411,8 +451,41 @@ def main() -> None:
             "improved": improved
         })
 
+    # REVISION NOTE: After RVND, reassign vehicles based on new demand distribution
+    # This ensures smallest feasible vehicle is used and stock limits are respected
+    used_vehicles = {}
+    reassigned_results = []
+    
+    for route_result in results:
+        improved = route_result["improved"]
+        total_demand = improved["total_demand"]
+        
+        # Reassign vehicle based on current demand
+        new_vehicle_type = assign_vehicle_by_demand(total_demand, instance["fleet"], used_vehicles)
+        
+        if new_vehicle_type is None:
+            # Stock exceeded - keep original assignment (mark as infeasible)
+            new_vehicle_type = route_result["vehicle_type"]
+            improved["vehicle_assignment_failed"] = True
+        else:
+            used_vehicles[new_vehicle_type] = used_vehicles.get(new_vehicle_type, 0) + 1
+            improved["vehicle_assignment_failed"] = False
+        
+        # Re-evaluate with correct vehicle type if changed
+        if new_vehicle_type != route_result["vehicle_type"]:
+            fleet_info = fleet_data[new_vehicle_type]
+            improved = evaluate_route(improved["sequence"], instance, distance_data, fleet_info)
+            improved["vehicle_assignment_failed"] = False
+        
+        reassigned_results.append({
+            "cluster_id": route_result["cluster_id"],
+            "vehicle_type": new_vehicle_type,
+            "baseline": route_result["baseline"],
+            "improved": improved
+        })
+
     output = {
-        "routes": results,
+        "routes": reassigned_results,
         "summary": summary,
         "parameters": {
             "inter_neighborhoods": INTER_ROUTE_NEIGHBORHOODS,
@@ -420,7 +493,8 @@ def main() -> None:
             "max_inter_iterations": MAX_INTER_ITERATIONS,
             "max_intra_iterations": MAX_INTRA_ITERATIONS,
             "seed": 84
-        }
+        },
+        "vehicle_usage": used_vehicles
     }
 
     with RVND_PATH.open("w", encoding="utf-8") as handle:
