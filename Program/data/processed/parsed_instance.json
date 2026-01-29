@@ -14,9 +14,9 @@
     {
       "id": 1,
       "name": "Customer 1",
-      "x": 20.0,
-      "y": 50.0,
-      "demand": 2.0,
+      "x": 40.0,
+      "y": 75.0,
+      "demand": 7.0,
       "time_window": {
         "start": "08:30",
         "end": "17:00"
@@ -26,21 +26,9 @@
     {
       "id": 2,
       "name": "Customer 2",
-      "x": 36.0,
-      "y": 23.0,
+      "x": 20.0,
+      "y": 60.0,
       "demand": 2.0,
-      "time_window": {
-        "start": "08:30",
-        "end": "17:00"
-      },
-      "service_time": 0
-    },
-    {
-      "id": 3,
-      "name": "Customer 3",
-      "x": 56.0,
-      "y": 65.0,
-      "demand": 4.0,
       "time_window": {
         "start": "08:30",
         "end": "17:00"
@@ -72,8 +60,8 @@
     }
   ],
   "acs_parameters": {
-    "num_ants": 2,
-    "alpha": 1,
+    "num_ants": 1,
+    "alpha": 0.5,
     "beta": 2,
     "rho": 0.2,
     "q0": 0.85,

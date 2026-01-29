@@ -203,6 +203,9 @@ def acs_cluster(cluster: dict, instance: dict, distance_data: dict, initial_rout
     best_metrics = evaluate_route(initial_route["sequence"], instance, distance_data)
     best_sequence = best_metrics["sequence"]
 
+    # Iteration logging for academic output
+    iteration_logs = []
+
     for iteration in range(1, max_iterations + 1):
         iteration_best_sequence = None
         iteration_best_metrics = None
@@ -229,6 +232,18 @@ def acs_cluster(cluster: dict, instance: dict, distance_data: dict, initial_rout
 
         global_update(pheromone, iteration_best_sequence, rho, iteration_best_metrics["total_distance"])
 
+        # Log this iteration
+        iteration_logs.append({
+            "iteration_id": iteration,
+            "phase": "ACS",
+            "routes_snapshot": [iteration_best_sequence],
+            "total_distance": iteration_best_metrics["total_distance"],
+            "total_service_time": iteration_best_metrics["total_service_time"],
+            "total_travel_time": iteration_best_metrics["total_travel_time"],
+            "vehicle_type": cluster["vehicle_type"],
+            "objective": iteration_best_metrics["objective"]
+        })
+
         if iteration_best_metrics["objective"] < best_metrics["objective"]:
             best_metrics = iteration_best_metrics
             best_sequence = iteration_best_sequence
@@ -237,6 +252,7 @@ def acs_cluster(cluster: dict, instance: dict, distance_data: dict, initial_rout
     best_metrics["vehicle_type"] = cluster["vehicle_type"]
     best_metrics["tau0"] = tau0
     best_metrics["iterations"] = max_iterations
+    best_metrics["iteration_logs"] = iteration_logs
 
     return best_metrics
 
@@ -271,6 +287,14 @@ def main() -> None:
         except Exception:
             pass
 
+    # Aggregate all iteration logs from all clusters
+    all_iteration_logs = []
+    for cluster_result in results:
+        if "iteration_logs" in cluster_result:
+            for log in cluster_result["iteration_logs"]:
+                log["cluster_id"] = cluster_result["cluster_id"]
+                all_iteration_logs.append(log)
+
     output = {
         "clusters": results,
         "summary": {
@@ -279,7 +303,8 @@ def main() -> None:
             "objective_sum": sum(route["objective"] for route in results)
         },
         "parameters": instance["acs_parameters"],
-        "random_seed": 42
+        "random_seed": 42,
+        "iteration_logs": all_iteration_logs
     }
 
     with ACS_RESULTS_PATH.open("w", encoding="utf-8") as handle:

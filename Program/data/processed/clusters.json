@@ -5,11 +5,10 @@
       "cluster_id": 1,
       "vehicle_type": "A",
       "customer_ids": [
-        3,
         1,
         2
       ],
-      "total_demand": 8.0
+      "total_demand": 9.0
     }
   ],
   "fleet_usage": {

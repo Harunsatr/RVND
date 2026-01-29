@@ -14,6 +14,8 @@ DATA_DIR = BASE_DIR / "data" / "processed"
 PARSED_INSTANCE = DATA_DIR / "parsed_instance.json"
 PARSED_DISTANCE = DATA_DIR / "parsed_distance.json"
 FINAL_SOLUTION = DATA_DIR / "final_solution.json"
+ACS_ROUTES = DATA_DIR / "acs_routes.json"
+RVND_ROUTES = DATA_DIR / "rvnd_routes.json"
 
 
 def _is_square_matrix(mat: List[List[Any]]) -> bool:
@@ -218,6 +220,27 @@ def run_pipeline(state: Dict[str, Any], progress_callback=None) -> Dict[str, Any
         # read final solution
         with FINAL_SOLUTION.open("r", encoding="utf-8") as fh:
             result = json.load(fh)
+        
+        # Add iteration logs from ACS and RVND to result
+        try:
+            if ACS_ROUTES.exists():
+                with ACS_ROUTES.open("r", encoding="utf-8") as fh:
+                    acs_data = json.load(fh)
+                    result["acs_data"] = {
+                        "iteration_logs": acs_data.get("iteration_logs", [])
+                    }
+        except Exception:
+            result["acs_data"] = {"iteration_logs": []}
+        
+        try:
+            if RVND_ROUTES.exists():
+                with RVND_ROUTES.open("r", encoding="utf-8") as fh:
+                    rvnd_data = json.load(fh)
+                    result["rvnd_data"] = {
+                        "iteration_logs": rvnd_data.get("iteration_logs", [])
+                    }
+        except Exception:
+            result["rvnd_data"] = {"iteration_logs": []}
 
         return result
     except subprocess.CalledProcessError as e:
