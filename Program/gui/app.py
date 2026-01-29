@@ -332,6 +332,129 @@ def render_export_section(final_solution: Dict, route_table: pd.DataFrame, final
 def main() -> None:
     st.set_page_config(page_title="MFVRPTW Route Optimisation", layout="wide")
 
+    # Theme toggle in sidebar
+    st.sidebar.markdown("## 🎨 Theme")
+    theme_options = ["🌙 Dark", "☀️ Light"]
+    
+    # Initialize theme in session state
+    if "app_theme" not in st.session_state:
+        st.session_state.app_theme = "🌙 Dark"
+    
+    selected_theme = st.sidebar.radio(
+        "Choose theme:",
+        theme_options,
+        index=theme_options.index(st.session_state.app_theme),
+        horizontal=True,
+        key="theme_selector"
+    )
+    st.session_state.app_theme = selected_theme
+    
+    # Apply theme using custom CSS
+    if selected_theme == "🌙 Dark":
+        st.markdown("""
+        <style>
+            /* Dark theme */
+            .stApp {
+                background-color: #0E1117;
+                color: #FAFAFA;
+            }
+            .stSidebar {
+                background-color: #262730;
+            }
+            .stTabs [data-baseweb="tab-list"] {
+                background-color: #262730;
+            }
+            .stTabs [data-baseweb="tab"] {
+                color: #FAFAFA;
+            }
+            .stMarkdown, .stText, p, span, label, h1, h2, h3, h4, h5, h6 {
+                color: #FAFAFA !important;
+            }
+            .stDataFrame {
+                background-color: #262730;
+            }
+            .stExpander {
+                background-color: #262730;
+                border-color: #4A4A5A;
+            }
+            .stMetric {
+                background-color: #262730;
+                border-radius: 10px;
+                padding: 10px;
+            }
+            .stMetric label {
+                color: #B0B0B0 !important;
+            }
+            .stMetric [data-testid="stMetricValue"] {
+                color: #FAFAFA !important;
+            }
+            div[data-testid="stSidebarContent"] {
+                background-color: #262730;
+            }
+            .stButton>button {
+                background-color: #FF6B6B;
+                color: white;
+                border: none;
+            }
+            .stButton>button:hover {
+                background-color: #FF8585;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <style>
+            /* Light theme */
+            .stApp {
+                background-color: #FFFFFF;
+                color: #262730;
+            }
+            .stSidebar {
+                background-color: #F0F2F6;
+            }
+            .stTabs [data-baseweb="tab-list"] {
+                background-color: #F0F2F6;
+            }
+            .stTabs [data-baseweb="tab"] {
+                color: #262730;
+            }
+            .stMarkdown, .stText, p, span, label, h1, h2, h3, h4, h5, h6 {
+                color: #262730 !important;
+            }
+            .stDataFrame {
+                background-color: #FFFFFF;
+            }
+            .stExpander {
+                background-color: #F0F2F6;
+                border-color: #D0D0D0;
+            }
+            .stMetric {
+                background-color: #F0F2F6;
+                border-radius: 10px;
+                padding: 10px;
+            }
+            .stMetric label {
+                color: #666666 !important;
+            }
+            .stMetric [data-testid="stMetricValue"] {
+                color: #262730 !important;
+            }
+            div[data-testid="stSidebarContent"] {
+                background-color: #F0F2F6;
+            }
+            .stButton>button {
+                background-color: #FF6B6B;
+                color: white;
+                border: none;
+            }
+            .stButton>button:hover {
+                background-color: #FF8585;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+    
+    st.sidebar.markdown("---")
+
     st.title("MFVRPTW Route Optimization")
     st.caption("Sweep → NN → ACS → RVND")
 
