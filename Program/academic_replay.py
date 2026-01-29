@@ -1675,25 +1675,132 @@ def validate_against_word(routes: List[Dict]) -> List[Dict]:
 # MAIN ACADEMIC REPLAY FUNCTION
 # ============================================================
 
-def run_academic_replay() -> Dict:
+def run_academic_replay(vehicle_selection: Optional[Dict] = None) -> Dict:
     """
     Run the complete academic replay pipeline.
-    Returns all iteration logs for display in UI.
+    
+    Args:
+        vehicle_selection: Optional dict from user input, format:
+            {
+                "A": {"enabled": True, "units": 2, "available_from": "08:00", "available_until": "17:00"},
+                "B": {"enabled": True, "units": 2, "available_from": "08:00", "available_until": "17:00"},
+                "C": {"enabled": False, "units": 1, "available_from": "", "available_until": ""}
+            }
+        If None, uses default ACADEMIC_DATASET fleet.
+    
+    Returns:
+        Dict with all iteration logs for display in UI.
     """
     print("=" * 60)
     print("ACADEMIC REPLAY MODE - Hitung Manual MFVRPTE RVND")
     print("=" * 60)
     
-    dataset = ACADEMIC_DATASET
+    dataset = deepcopy(ACADEMIC_DATASET)
+    
+    # ============================================================
+    # APPLY USER VEHICLE SELECTION (NEW!)
+    # ============================================================
+    user_vehicle_selection_log = []
+    
+    if vehicle_selection:
+        print("\n[PRE] Applying User Vehicle Selection...")
+        
+        # Update fleet based on user selection
+        updated_fleet = []
+        for vehicle in dataset["fleet"]:
+            vid = vehicle["id"]
+            if vid in vehicle_selection:
+                user_sel = vehicle_selection[vid]
+                
+                # Check if vehicle is enabled by user
+                if user_sel.get("enabled", False) and user_sel.get("units", 0) > 0:
+                    # User enabled this vehicle - update availability times
+                    vehicle["units"] = user_sel.get("units", vehicle["units"])
+                    vehicle["available_from"] = user_sel.get("available_from", "")
+                    vehicle["available_until"] = user_sel.get("available_until", "")
+                    updated_fleet.append(vehicle)
+                    
+                    user_vehicle_selection_log.append({
+                        "phase": "USER_VEHICLE_SELECTION",
+                        "vehicle_id": vid,
+                        "capacity": vehicle["capacity"],
+                        "enabled": True,
+                        "units": vehicle["units"],
+                        "available_from": vehicle["available_from"],
+                        "available_until": vehicle["available_until"],
+                        "status": f"✅ Selected by user ({vehicle['units']} units, {vehicle['available_from']}–{vehicle['available_until']})"
+                    })
+                    print(f"   ✅ Vehicle {vid}: {vehicle['units']} units ({vehicle['available_from']}–{vehicle['available_until']})")
+                else:
+                    # User did NOT select this vehicle
+                    user_vehicle_selection_log.append({
+                        "phase": "USER_VEHICLE_SELECTION",
+                        "vehicle_id": vid,
+                        "capacity": vehicle["capacity"],
+                        "enabled": False,
+                        "units": 0,
+                        "available_from": "",
+                        "available_until": "",
+                        "status": "❌ NOT selected by user - will NOT be used"
+                    })
+                    print(f"   ❌ Vehicle {vid}: NOT selected by user")
+            else:
+                # Vehicle not in selection dict - use default but mark as not selected
+                user_vehicle_selection_log.append({
+                    "phase": "USER_VEHICLE_SELECTION",
+                    "vehicle_id": vid,
+                    "capacity": vehicle["capacity"],
+                    "enabled": False,
+                    "units": 0,
+                    "available_from": "",
+                    "available_until": "",
+                    "status": "❌ NOT in user selection - will NOT be used"
+                })
+                print(f"   ❌ Vehicle {vid}: NOT in user selection")
+        
+        # Replace fleet with only user-selected vehicles
+        dataset["fleet"] = updated_fleet
+        print(f"   → {len(updated_fleet)} vehicle types selected by user for routing")
+    else:
+        print("\n[PRE] Using default fleet (no user selection provided)")
+        for vehicle in dataset["fleet"]:
+            user_vehicle_selection_log.append({
+                "phase": "USER_VEHICLE_SELECTION",
+                "vehicle_id": vehicle["id"],
+                "capacity": vehicle["capacity"],
+                "enabled": True,
+                "units": vehicle["units"],
+                "available_from": vehicle.get("available_from", "08:00"),
+                "available_until": vehicle.get("available_until", "17:00"),
+                "status": f"✅ Default ({vehicle['units']} units)"
+            })
+    
     distance_matrix = build_distance_matrix(dataset)
     
     all_logs = []
+    all_logs.extend(user_vehicle_selection_log)  # Add user selection logs FIRST
     
     # ============================================================
-    # 0. VEHICLE AVAILABILITY CHECK (NEW!)
+    # 0. VEHICLE AVAILABILITY CHECK
     # ============================================================
     print("\n[0/5] Checking Vehicle Availability...")
     fleet = dataset["fleet"]
+    
+    if len(fleet) == 0:
+        print("   ❌ CRITICAL: No vehicles selected by user! Cannot proceed.")
+        return {
+            "mode": "ACADEMIC_REPLAY",
+            "error": "No vehicles selected by user",
+            "user_vehicle_selection": user_vehicle_selection_log,
+            "vehicle_availability": [],
+            "available_vehicles": [],
+            "dataset": dataset,
+            "clusters": [],
+            "routes": [],
+            "costs": {"total_cost": 0},
+            "iteration_logs": all_logs
+        }
+    
     availability_status = get_vehicle_availability_status(fleet)
     available_fleet = get_available_vehicles(fleet)
     
@@ -1851,6 +1958,7 @@ def run_academic_replay() -> Dict:
     # Save results
     output = {
         "mode": "ACADEMIC_REPLAY",
+        "user_vehicle_selection": user_vehicle_selection_log,
         "vehicle_availability": availability_status,
         "available_vehicles": [v["id"] for v in available_fleet],
         "dataset": dataset,

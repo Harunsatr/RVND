@@ -384,6 +384,63 @@ def _display_vehicle_assignment(logs: List[Dict]) -> None:
         st.dataframe(df, use_container_width=True, hide_index=True)
 
 
+def _display_user_vehicle_selection(result: Dict[str, Any]) -> None:
+    """Display user's vehicle selection and decision reasons."""
+    st.markdown("### 🚛 User Vehicle Selection")
+    st.markdown("*Kendaraan yang dipilih user di Input Data*")
+    
+    user_selection = result.get("user_vehicle_selection", [])
+    
+    if not user_selection:
+        # Try to get from logs
+        logs = result.get("iteration_logs", [])
+        user_selection = [l for l in logs if l.get("phase") == "USER_VEHICLE_SELECTION"]
+    
+    if not user_selection:
+        st.info("Tidak ada data pemilihan kendaraan user. Menggunakan default.")
+        return
+    
+    # Display selection table
+    df = pd.DataFrame([{
+        "Kendaraan": s.get("vehicle_id", "?"),
+        "Kapasitas": s.get("capacity", 0),
+        "Dipilih": "✅ Ya" if s.get("enabled", False) else "❌ Tidak",
+        "Unit": s.get("units", 0) if s.get("enabled", False) else "-",
+        "Jam Operasional": f"{s.get('available_from', '-')}–{s.get('available_until', '-')}" if s.get("enabled", False) else "-",
+        "Status": s.get("status", "?")
+    } for s in user_selection])
+    st.dataframe(df, use_container_width=True, hide_index=True)
+    
+    # Summary
+    enabled = [s for s in user_selection if s.get("enabled", False)]
+    disabled = [s for s in user_selection if not s.get("enabled", False)]
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Kendaraan Aktif", len(enabled))
+    with col2:
+        st.metric("Kendaraan Tidak Aktif", len(disabled))
+    
+    # Decision explanation
+    st.markdown("---")
+    st.markdown("#### 📋 Penjelasan Keputusan")
+    
+    for s in user_selection:
+        vid = s.get("vehicle_id", "?")
+        enabled = s.get("enabled", False)
+        status = s.get("status", "")
+        
+        if enabled:
+            st.success(f"**Vehicle {vid}**: {status}")
+        else:
+            st.warning(f"**Vehicle {vid}**: {status}")
+    
+    # Important note
+    st.markdown("---")
+    st.info("📌 **Aturan Routing**: Algoritma HANYA menggunakan kendaraan yang dipilih user. "
+            "Kendaraan yang tidak dipilih TIDAK akan digunakan dalam Sweep, NN, ACS, maupun RVND.")
+
+
 def _display_vehicle_availability(result: Dict[str, Any]) -> None:
     """Display vehicle availability schedule and status."""
     st.markdown("### 🕐 Vehicle Availability Schedule")
@@ -559,6 +616,29 @@ def render_academic_replay() -> None:
     
     st.divider()
     
+    # Show current vehicle selection from Input Data
+    vehicle_selection = st.session_state.get("vehicle_selection", None)
+    if vehicle_selection:
+        st.markdown("### 🚛 Kendaraan yang Dipilih (dari Input Data)")
+        enabled = [f"**{v}** ({d['units']} unit, {d['available_from']}–{d['available_until']})" 
+                   for v, d in vehicle_selection.items() 
+                   if d.get("enabled", False) and d.get("units", 0) > 0]
+        disabled = [f"**{v}**" for v, d in vehicle_selection.items() 
+                    if not d.get("enabled", False) or d.get("units", 0) == 0]
+        
+        if enabled:
+            st.success(f"✅ Aktif: {', '.join(enabled)}")
+        if disabled:
+            st.warning(f"❌ Tidak aktif: {', '.join(disabled)}")
+        
+        if not enabled:
+            st.error("⚠️ Tidak ada kendaraan yang dipilih! Silakan pilih kendaraan di tab 'Input Data' terlebih dahulu.")
+            return
+    else:
+        st.info("ℹ️ Menggunakan kendaraan default. Pilih kendaraan di tab 'Input Data' untuk kontrol penuh.")
+    
+    st.divider()
+    
     # Run button
     col1, col2 = st.columns([1, 3])
     with col1:
@@ -570,15 +650,19 @@ def render_academic_replay() -> None:
                     sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
                     from academic_replay import run_academic_replay
                     
-                    result = run_academic_replay()
+                    # Pass vehicle selection from session state
+                    vehicle_selection = st.session_state.get("vehicle_selection", None)
+                    result = run_academic_replay(vehicle_selection=vehicle_selection)
                     st.session_state["academic_result"] = result
                     st.success("Academic replay completed!")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Error: {e}")
+                    import traceback
+                    st.code(traceback.format_exc())
     
     with col2:
-        st.info("Klik untuk menjalankan validasi akademik sesuai dokumen Word.")
+        st.info("Klik untuk menjalankan validasi akademik. Algoritma hanya akan menggunakan kendaraan yang dipilih di Input Data.")
     
     st.divider()
     
@@ -589,11 +673,15 @@ def render_academic_replay() -> None:
         st.warning("Belum ada hasil. Klik 'Run Academic Replay' untuk memulai.")
         return
     
+    # Check for errors
+    if result.get("error"):
+        st.error(f"❌ Error: {result['error']}")
+    
     logs = result.get("iteration_logs", [])
     
     # Create tabs for each phase
     tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "🕐 Availability",
+        "🚛 Vehicle Selection",
         "📐 Sweep", 
         "🔗 NN", 
         "🐜 ACS", 
@@ -604,6 +692,8 @@ def render_academic_replay() -> None:
     ])
     
     with tab0:
+        _display_user_vehicle_selection(result)
+        st.divider()
         _display_vehicle_availability(result)
     
     with tab1:
